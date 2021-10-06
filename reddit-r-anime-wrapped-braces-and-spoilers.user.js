@@ -2,6 +2,8 @@
 // @name        Wrapped braces and spoilers on /r/anime
 // @namespace   https://asm.works
 // @match       https://old.reddit.com/r/anime/*
+// @match       https://www.reddit.com/r/anime/*
+// @match       https://reddit.com/r/anime/*
 // @grant       none
 // @version     1.0
 // @author      asmLANG
