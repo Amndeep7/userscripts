@@ -1,11 +1,14 @@
 // ==UserScript==
-// // @name        Wrapped braces and spoilers on /r/anime
-// // @namespace   https://asm.works
-// // @match       https://old.reddit.com/r/anime/*
-// // @grant       none
-// // @version     1.0
-// // @author      asmLANG
-// // @description Spoilers are mandated to have braces in front of them.  This script puts those braces in a span and then also wraps the entire spanned braces + spoiler construct with a span.  This enables end users to apply custom css as desired.
+// @name        Wrapped braces and spoilers on /r/anime
+// @namespace   https://asm.works
+// @match       https://old.reddit.com/r/anime/*
+// @grant       none
+// @version     1.0
+// @author      asmLANG
+// @description Spoilers are mandated to have braces in front of them.  This script puts those braces in a span and then also wraps the entire spanned braces + spoiler construct with a span.  This enables end users to apply custom css as desired.
+// @updateURL   https://raw.githubusercontent.com/Amndeep7/userscripts/main/reddit-r-anime-wrapped-braces-and-spoilers.user.js
+// @downloadURL https://raw.githubusercontent.com/Amndeep7/userscripts/main/reddit-r-anime-wrapped-braces-and-spoilers.user.js
+// @supportURL  https://github.com/Amndeep7/userscripts/issues
 // ==/UserScript==
 
 (function() {
