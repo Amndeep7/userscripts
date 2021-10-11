@@ -13,11 +13,11 @@
 // @supportURL  https://github.com/Amndeep7/userscripts/issues
 // ==/UserScript==
 
-const replaceSpoilers = () => {
+const replaceSpoilers = (comment) => {
 	'use strict';
 
 	// find all the spoilers
-	const spoilers = Array.from(document.querySelectorAll('.md-spoiler-text'));
+	const spoilers = Array.from(comment.querySelectorAll('.md-spoiler-text'));
 	if(spoilers.length === 0) {
 		return;
 	}
@@ -80,5 +80,11 @@ const replaceSpoilers = () => {
 (() => {
 	'use strict';
 
-	replaceSpoilers();
+	new MutationObserver(mutations => {
+		for (let mutation of mutations) {
+			mutation.target.querySelectorAll('.usertext-body').forEach(replaceSpoilers);
+		}
+	}).observe(document.body, {subtree: true, childList: true});
+
+	document.querySelectorAll('.usertext-body').forEach(replaceSpoilers);
 })();
