@@ -18,11 +18,19 @@ const replaceSpoilers = () => {
 
 	// find all the spoilers
 	const spoilers = Array.from(document.querySelectorAll('.md-spoiler-text'));
+	if(spoilers.length === 0) {
+		return;
+	}
 
 	// process the preceding text to extract the text within brackets so as to place them in a separate span/element from the textnode
 	const previousText = Array.from(spoilers.map(s => s.previousSibling));
 	const braceSpans = [];
 	for(const pt of previousText) {
+		if('classList' in pt && pt.classList.contains('asmworks-spoiler-braces')) {
+			braceSpans.push(undefined);
+			continue;
+		}
+
 		const text = pt.data.trimEnd();
 		let index = text.length - 1;
 		let counter = 0;
@@ -53,6 +61,10 @@ const replaceSpoilers = () => {
 
 	// modify the DOM
 	for(const [i, s] of spoilers.entries()) {
+		if(braceSpans[i] === undefined) {
+			continue;
+		}
+
 		s.classList.add('asmworks-spoiler-spoilertext');
 
 		let wrapper = document.createElement('span');
