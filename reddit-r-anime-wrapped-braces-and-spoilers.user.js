@@ -5,7 +5,7 @@
 // @match       https://www.reddit.com/r/anime/*
 // @match       https://reddit.com/r/anime/*
 // @grant       none
-// @version     2.0
+// @version     3.0
 // @author      asmLANG, gyoex
 // @description Spoilers are mandated to have braces in front of them.  This script puts those braces in a span and then also wraps the entire spanned braces + spoiler construct with a span.  This enables end users to apply custom css as desired.
 // @updateURL   https://raw.githubusercontent.com/Amndeep7/userscripts/main/reddit-r-anime-wrapped-braces-and-spoilers.user.js
@@ -37,49 +37,83 @@ const replaceSpoilers = (comment) => {
 		return;
 	}
 
-	// process the preceding text to extract the text within brackets so as to place them in a separate span/element from the textnode
-	const previousText = Array.from(spoilers.map(s => s.previousSibling));
+	// process the preceding text and elements so as to extract what is within brackets and place them in a separate span
+	const previousSiblings = Array.from(spoilers.map(s => s.previousSibling));
 	const braceSpans = [];
-	for(const pt of previousText) {
-		if('classList' in pt && pt.classList.contains('asmworks-spoiler-braces')) {
-			braceSpans.push(undefined);
+	for(const ps of previousSiblings) {
+		if('classList' in ps && ps.classList.contains('asmworks-spoiler-braces')) {
+			braceSpans.push(null);
 			continue;
 		}
 
-		const text = pt.data.trimEnd();
-		let index = text.length - 1;
-		let counter = 0;
-		let braceText = "";
-		do {
-			braceText = text[index] + braceText;
-			switch(text[index]) {
-				case ']':
-					counter += 1;
-					break;
-				case '[':
-					counter -= 1;
-					break;
-				default:
-					break;
-			}
-			index -= 1;
-		} while(counter > 0);
-
-		pt.data = text.slice(0, index + 1); // index is potentally -1 if the entire text is the bracket text
-
 		let span = document.createElement('span');
 		span.classList.add('asmworks-spoiler-braces');
-		let textNode = document.createTextNode(braceText.slice(1, -1)); // remove the braces
-		span.appendChild(textNode);
 		braceSpans.push(span);
+
+		let counter = 0;
+		let currentNode = ps;
+		let previousSibling = 'previousSibling' in currentNode ? currentNode.previousSibling : null;
+		if(currentNode.nodeType !== Node.TEXT_NODE || currentNode.data.trimEnd().slice(-1) !== ']') {
+			console.log('Malformed spoiler: does not have braced text');
+			braceSpans.pop();
+			braceSpans.push(null);
+			continue;
+		}
+
+		while(currentNode !== null) {
+			if(currentNode.nodeType !== Node.TEXT_NODE) {
+				span.insertBefore(currentNode, span.firstChild);
+			} else {
+				const text = currentNode.data.trimEnd();
+				let index = text.length - 1;
+				let braceText = [];
+				do {
+					braceText.push(text[index]);
+					switch(text[index]) {
+						case ']':
+							counter += 1;
+							break;
+						case '[':
+							counter -= 1;
+							break;
+						default:
+							break;
+					}
+					index -= 1;
+				} while(counter > 0 && index >= 0);
+
+				if(index === -1) {
+					span.insertBefore(currentNode, span.firstChild);
+				} else {
+					currentNode.data = text.slice(0, index + 1);
+					let textNode = document.createTextNode(braceText.reverse().join(''));
+					span.insertBefore(textNode, span.firstChild);
+				}
+			}
+
+			const tmp = previousSibling !== null && 'previousSibling' in previousSibling ? previousSibling.previousSibling : null;
+			currentNode = previousSibling;
+			previousSibling = tmp;
+			if(counter === 0) {
+				break;
+			}
+		}
+		if(counter !== 0) {
+			console.log('Malformed spoiler: does not have braced text');
+			braceSpans.pop();
+			braceSpans.push(null);
+			continue;
+		}
+
+		span.firstChild.data = span.firstChild.data.slice(1); // we've ensured that the first character is an opening bracket so can just remove that
+		span.lastChild.data = span.lastChild.data.trimEnd().slice(0, -1); // but if we follow the case of putting the entire node in there, then it's possible there's still whitespace before the closing bracket
 	}
 
 	// modify the DOM
 	for(const [i, s] of spoilers.entries()) {
-		if(braceSpans[i] === undefined) {
+		if(braceSpans[i] === null) {
 			continue;
 		}
-
 		s.classList.add('asmworks-spoiler-spoilertext');
 
 		let wrapper = document.createElement('span');
@@ -95,11 +129,12 @@ const replaceSpoilers = (comment) => {
 (() => {
 	'use strict';
 
+	document.querySelectorAll('.usertext-body').forEach(replaceSpoilers);
+
 	new MutationObserver(mutations => {
 		for (let mutation of mutations) {
 			mutation.target.querySelectorAll('.usertext-body').forEach(replaceSpoilers);
 		}
 	}).observe(document.body, {subtree: true, childList: true});
-
-	document.querySelectorAll('.usertext-body').forEach(replaceSpoilers);
 })();
+
