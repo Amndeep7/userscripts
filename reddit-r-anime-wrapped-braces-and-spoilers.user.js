@@ -5,9 +5,9 @@
 // @match       https://www.reddit.com/r/anime/*
 // @match       https://reddit.com/r/anime/*
 // @grant       none
-// @version     3.0
+// @version     3.1
 // @author      asmLANG, gyoex
-// @description Spoilers are mandated to have braces in front of them.  This script puts those braces in a span and then also wraps the entire spanned braces + spoiler construct with a span.  This enables end users to apply custom css as desired.
+// @description Spoilers are mandated to have braces in front of them.  This script puts those braces in a span and then also wraps the entire spanned braces + spoiler construct with a span.  This enables end users to apply custom css as desired.  NOTICE: A breaking change will happen on the next version update where the URLs for update/download will point to different locations.  Please be ready to either manually modify those URLs or reinstall the userscript.
 // @updateURL   https://raw.githubusercontent.com/Amndeep7/userscripts/main/reddit-r-anime-wrapped-braces-and-spoilers.user.js
 // @downloadURL https://raw.githubusercontent.com/Amndeep7/userscripts/main/reddit-r-anime-wrapped-braces-and-spoilers.user.js
 // @supportURL  https://github.com/Amndeep7/userscripts/issues
