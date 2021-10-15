@@ -5,7 +5,7 @@
 // @match       https://www.reddit.com/r/anime/*
 // @match       https://reddit.com/r/anime/*
 // @grant       none
-// @version     4.0
+// @version     4.1
 // @author      asmLANG, gyoex
 // @description Spoilers are mandated to have braces in front of them.  This script puts those braces in a span and then also wraps the entire spanned braces + spoiler construct with a span.  This enables end users to apply custom css as desired.
 // @updateURL   https://raw.githubusercontent.com/Amndeep7/userscripts/main/reddit/spoilers/r-anime-spoilers.user.js
